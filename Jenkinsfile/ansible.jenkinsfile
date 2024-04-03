@@ -47,7 +47,7 @@ pipeline {
                     -e "external_port=3233" \
                     -e "internal_port=80" \
                     -e "docker_image=muyleangin/reactjs:latest" \
-                    -e "domain_name=jina.sen-pai.live" \
+                    -e "domain_name=ansible-reactjs.kimsa.website" \
                     '''
                 }
             }
