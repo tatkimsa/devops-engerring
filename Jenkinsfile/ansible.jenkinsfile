@@ -17,7 +17,7 @@ pipeline {
                 sh'''
                 ls -lrt
                 pwd
-                ls /var/jenkins_home/workspace/ansible/ansible-jenkins-intergraion/shellscript/*
+                ls /var/jenkins_home/workspace/ansible/*
                 '''
             }
         }
