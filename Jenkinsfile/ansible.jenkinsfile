@@ -9,7 +9,7 @@ pipeline {
         }
         stage('git clone'){
             steps {
-                git branch: 'main' ,url:'https://github.com/MuyleangIng/devops-engerring.git'
+                git branch: 'main' ,url:'https://github.com/tatkimsa/devops-engerring.git'
             }
         }
         stage('check location pwd'){
