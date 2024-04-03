@@ -1,0 +1,13 @@
+version: '3'
+services:
+  frontend_ui:
+    image: postgres:latest
+    container_name: frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+
+
+  

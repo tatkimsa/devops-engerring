@@ -1,0 +1,56 @@
+---
+- name: Deploy Docker container with variables
+  hosts: workers
+  become: true
+  vars:
+    docker_image: "{{ docker_image }}" # Ensure this variable is passed or defined elsewhere
+    docker_container_name: "{{ docker_container_name }}" # Ensure this variable is passed or defined elsewhere
+    docker_port: "{{ expose_port }}:{{ docker_port }}" # Ensure 'expose_port' and 'docker_port' are defined
+    domain_name: "gitlabsopheng.sen-pai.live"
+    app_port: "{{ expose_port }}" # Corrected missing quote
+  tasks:
+    - name: run docker with command docker run -d
+      command: docker run -d -p {{ expose_port }}:{{ docker_port }} {{ docker_image }}
+      register: docker_run
+      failed_when: docker_run.rc != 0 
+    # - name: Run Docker container
+    #   docker_container:
+    #     name: "{{ docker_container_name }}"
+    #     image: "{{ docker_image }}"
+    #     state: started
+    #     ports:
+    #       - "{{ docker_port }}"
+    #     restart_policy: always
+
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Setup Nginx Server Block
+      template:
+        src: nginx_domain.conf.j2
+        dest: "/etc/nginx/sites-available/{{ domain_name }}"
+
+    - name: Enable Nginx configuration
+      file:
+        src: "/etc/nginx/sites-available/{{ domain_name }}"
+        dest: "/etc/nginx/sites-enabled/{{ domain_name }}"
+        state: link
+
+    - name: Reload Nginx to apply changes
+      service:
+        name: nginx
+        state: reloaded
+    - name: Obtain and Install SSL Certificate with Certbot
+      command: certbot --nginx -d {{ domain_name }} --non-interactive --agree-tos -m your@email.com --redirect
+      args:
+        creates: /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem
+      notify:
+        - Reload Nginx
+
+  handlers:
+    - name: Reload Nginx
+      service:
+        name: nginx
+        state: reloaded

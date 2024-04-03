@@ -1,0 +1,56 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('clean workspace') {
+            steps {
+                cleanWs()
+            }
+        }
+        stage('git clone'){
+            steps {
+                git branch: 'main' ,url:'https://github.com/MuyleangIng/devops-engerring.git'
+            }
+        }
+        stage('check location pwd'){
+            steps{
+                sh'''
+                ls -lrt
+                pwd
+                ls /var/jenkins_home/workspace/ansible/ansible-jenkins-intergraion/shellscript/*
+                '''
+            }
+        }
+        stage('Check ansible vers') {
+            steps {
+                script {
+                    sh '''ansible --version
+                    ansible -i ansible/hosts workers -m ping
+                    '''    
+                }
+            }
+        }
+        stage('ansible create folder') {
+            steps {
+                script {
+                    sh '''
+                    ansible-playbook -i ansible/hosts ansible/create-folder.yml
+                    '''    
+                }
+            }
+        }    
+        stage('deploy with docker on remote server'){
+            steps{
+                script{
+                    sh'''
+                    ansible-playbook -i ansible/hosts ansible/deploy.yml \
+                    -e "external_port=3233" \
+                    -e "internal_port=80" \
+                    -e "docker_image=muyleangin/reactjs:latest" \
+                    -e "domain_name=jina.sen-pai.live" \
+                    '''
+                }
+            }
+        }
+    }
+}

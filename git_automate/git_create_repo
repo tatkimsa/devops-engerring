@@ -1,0 +1,29 @@
+#!/bin/bash
+gitusername="MuyleangIng"
+gittoken=""    
+gitUrl="github.com/$gitusername"
+
+
+echo "Starting repository script"
+read -p "Enter repository: " nameRepo
+if [ -z "$nameRepo" ]; then
+  echo "repository cannot be empty. Exiting."
+  exit 1
+fi
+echo "Name of repository is $nameRepo"
+# Execute curl command and capture HTTP status code
+http_status=$(curl -s -o /dev/null -w "%{http_code}" -L -X POST \
+  -H "Accept: application/vnd.github.v3+json" \
+  -H "Authorization: Bearer $gittoken" \
+  "https://api.github.com/user/repos" \
+  -d "{\"name\":\"$nameRepo\",\"description\":\"This is your first repository\",\"homepage\":\"https://github.com\",\"private\":false,\"has_issues\":true,\"has_projects\":true,\"has_wiki\":true}")
+
+# Check if the repository was created successfully
+if [ "$http_status" -eq 201 ]; then
+    echo "Repository created successfully."
+else
+    echo "Failed to create repository. HTTP status: $http_status"
+    exit 1
+fi
+
+echo "git remote add origin git@$gitUrl/$nameRepo.git"

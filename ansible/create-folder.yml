@@ -1,0 +1,17 @@
+---
+- name: Execute the shellscript 
+  hosts: workers
+  become: true
+  tasks:
+    - name: Create a directory 
+      file: 
+        path: /root/folder1
+        state: directory
+        mode: 0755
+    - name: Copy the shellscript to the remote server
+      copy:
+        src: ../shellscript/createfolder.sh
+        dest: /root/folder1/
+        mode: '0755'
+    - name: Execute the shellscript
+      command: bash /root/folder1/createfolder.sh    

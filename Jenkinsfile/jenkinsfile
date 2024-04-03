@@ -1,0 +1,55 @@
+pipeline {
+    agent {
+        label 'worker2'
+    }
+    tools{
+        nodejs 'node-18.9.1'
+    }
+
+    stages {
+        stage('Get Resource from git') {
+            steps {
+                git 'https://github.com/MuyleangIng/react-project.git'
+            }
+        }
+        stage('Build Reactjs with Node'){
+            steps {
+                sh '''
+                node -v
+                pwd
+                npm install --force
+                npm run build
+                '''
+            }
+            
+        }
+        stage('Build Dockerfile'){
+                      agent {
+        label 'worker2'
+    }
+            steps {
+                sh '''
+                cd /home/sen/jenkins-job/workspace/frontend/reactjs-pipeline
+
+                    docker build -t muyleangin/reactjs-img:1.2 .
+                    docker login -u muyleangin -p LeanG080720
+                    docker push muyleangin/reactjs-img:1.2
+                '''
+            }
+            
+        }
+        stage('Doploy reactjs'){
+            agent {
+        label 'worker1'
+    }
+            steps {
+                sh '''
+                    docker login -u muyleangin -p LeanG080720
+                    docker run -d -p 3003:80 --name reacjt-contv2 muyleangin/reactjs-img:1.2
+                    curl ifconfig.me
+                '''
+            }
+            
+        }
+    }
+}

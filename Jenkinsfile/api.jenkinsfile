@@ -1,0 +1,31 @@
+pipeline {
+    agent any;
+    tools{
+        gradle 'gradle-8.7'
+    }
+
+    stages {
+        stage('Get Resource from git') {
+            steps {
+                git branch: 'main', url: 'https://github.com/MuyleangIng/dev-fileupload.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'gradle clean build'
+            }
+        }
+        stage('scan sonarqube') {
+            steps {
+                withSonarQubeEnv(installationName:'sonarqube') {
+                     sh """
+                     chmod +x gradlew
+
+                     ./gradlew sonar
+                     """
+                }
+            }
+        }
+        
+    }
+}

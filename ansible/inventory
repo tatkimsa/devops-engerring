@@ -1,0 +1,7 @@
+localhost ansible_connection=local
+[master]
+master ansible_host=206.189.157.230 ansible_user=root ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+
+[workers]
+node1 ansible_host=167.99.75.191 ansible_user=root ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+node2 ansible_host=128.199.127.236 ansible_user=root ansible_ssh_common_args='-o StrictHostKeyChecking=no'

@@ -1,0 +1,38 @@
+version: "3.8"
+services:
+  mysql:
+    container_name: "new-mysql-db"
+    image: mysql
+    ports:
+      - "3308:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=123
+      - MYSQL_USER=dara
+      - MYSQL_PASSWORD=123
+      - MYSQL_DATABASE=test
+    volumes:
+      - new-mysql:/var/lib/mysql
+    networks:
+      - new-mysql-net
+  wordpress:
+    depends_on:
+      - mysql
+    container_name: "my-wordpress"
+    image: wordpress
+    ports:
+      - "81:80"    
+    environment:
+      - WORDPRESS_DB_HOST=mysql
+      - WORDPRESS_DB_USER=dara
+      - WORDPRESS_DB_PASSWORD=123
+      - WORDPRESS_DB_NAME=test
+    volumes:
+      - wordpress-db:/var/www/html
+    networks:
+      - new-mysql-net
+volumes:
+  new-mysql:
+  wordpress-db:
+networks:
+  new-mysql-net:
+
