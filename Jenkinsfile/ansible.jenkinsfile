@@ -1,12 +1,12 @@
 pipeline {
     agent any
 
-    stages {
-        stage('clean workspace') {
-            steps {
-                cleanWs()
-            }
-        }
+    // stages {
+    //     stage('clean workspace') {
+    //         steps {
+    //             cleanWs()
+    //         }
+    //     }
         stage('git clone'){
             steps {
                 git branch: 'main' ,url:'https://github.com/tatkimsa/devops-engerring.git'
